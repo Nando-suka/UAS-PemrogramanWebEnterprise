@@ -76,9 +76,8 @@
         <div class="chart-section">
             <div class="chart-card-jurnal">
                 <div class="chart-header-jurnal">
-                    <h5>Users</h5>
-                    <div class="date-selector">
-                        <span>12 Agustus 2023</span>
+                    <div class="date-selector-top">
+                        <span>1 Juni -7 Juni 2023</span>
                         <i class="bi bi-chevron-down ms-2"></i>
                     </div>
                 </div>
@@ -170,24 +169,16 @@
     /* Info Cards */
     .info-cards {
         display: flex;
-        flex-direction: row;
-        gap: 1.25rem;
-        align-items: stretch;
+        flex-direction: column;
+        gap: 1.5rem;
     }
 
     .info-card {
         background: linear-gradient(135deg, #3a3d5f 0%, #2C2E4E 100%);
         border-radius: 12px;
-        padding: 1.2rem 1rem;
+        padding: 1.2rem;
         border: 1px solid rgba(255, 255, 255, 0.1);
         transition: all 0.3s ease;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        flex: 1 1 0;
-        min-width: 180px;
     }
 
     .info-card:hover {
@@ -197,55 +188,48 @@
     }
 
     .card-header-info {
-        margin-bottom: 0.5rem;
-        width: 100%;
-        text-align: center;
+        margin-bottom: 1rem;
     }
 
     .card-date {
-        color: rgba(255, 255, 255, 0.75);
-        font-size: 0.9rem;
-        font-weight: 600;
-        display: block;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.85rem;
+        font-weight: 500;
     }
 
     .card-content {
         display: flex;
         flex-direction: column;
-        gap: 0.6rem;
-        align-items: center;
+        gap: 0.8rem;
     }
 
     .info-item {
         display: flex;
-        flex-direction: column;
         align-items: center;
-        gap: 0.4rem;
+        gap: 1rem;
     }
 
     .info-icon {
-        font-size: 2.2rem;
+        font-size: 2.5rem;
         flex-shrink: 0;
-        display: block;
     }
 
     .info-details {
         display: flex;
         flex-direction: column;
-        gap: 0.2rem;
-        align-items: center;
+        gap: 0.3rem;
     }
 
     .info-label {
-        color: rgba(255, 255, 255, 0.75);
-        font-size: 0.9rem;
-        font-weight: 600;
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.85rem;
+        font-weight: 500;
     }
 
     .info-value {
         color: white;
-        font-size: 1.25rem;
-        font-weight: 800;
+        font-size: 1.1rem;
+        font-weight: 700;
     }
 
     /* Chart Section */
@@ -263,32 +247,26 @@
 
     .chart-header-jurnal {
         display: flex;
-        justify-content: space-between;
+        justify-content: flex-end;
         align-items: center;
         margin-bottom: 1.5rem;
     }
 
-    .chart-header-jurnal h5 {
-        color: white;
-        font-size: 1.2rem;
-        font-weight: 600;
-        margin: 0;
-    }
-
-    .date-selector {
+    .date-selector-top {
         background: rgba(255, 255, 255, 0.08);
         border: 1px solid rgba(255, 255, 255, 0.15);
-        color: rgba(255, 255, 255, 0.8);
-        padding: 0.5rem 1rem;
+        color: white;
+        padding: 0.6rem 1.2rem;
         border-radius: 6px;
         font-size: 0.9rem;
+        font-weight: 500;
         cursor: pointer;
         display: flex;
         align-items: center;
         transition: all 0.3s ease;
     }
 
-    .date-selector:hover {
+    .date-selector-top:hover {
         background: rgba(255, 255, 255, 0.12);
         border-color: rgba(255, 255, 255, 0.25);
     }
@@ -305,8 +283,7 @@
         }
 
         .info-cards {
-            flex-direction: column;
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
         }
     }
 
@@ -330,33 +307,24 @@
         Chart.defaults.color = 'rgba(255, 255, 255, 0.7)';
         Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
 
-        // Users Chart (Line Chart)
+        // Users Chart (Bar Chart)
         const ctx = document.getElementById('usersChart').getContext('2d');
-        
-        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-        gradient.addColorStop(0, 'rgba(255, 193, 7, 0.3)');
-        gradient.addColorStop(1, 'rgba(255, 193, 7, 0)');
 
         new Chart(ctx, {
-            type: 'line',
+            type: 'bar',
             data: {
-                labels: ['0j', '2j', '4j', '6j', '8j'],
+                labels: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
                 datasets: [{
-                    label: 'Users',
-                    data: [0, 350, 100, 150, 100, 2500],
-                    borderColor: '#ffc107',
-                    backgroundColor: gradient,
-                    borderWidth: 3,
-                    fill: true,
-                    tension: 0.4,
-                    pointRadius: 6,
-                    pointBackgroundColor: '#ffc107',
-                    pointBorderColor: '#fff',
-                    pointBorderWidth: 2,
-                    pointHoverRadius: 8,
-                    pointHoverBackgroundColor: '#ffc107',
-                    pointHoverBorderColor: '#fff',
-                    pointHoverBorderWidth: 3
+                    label: 'Hours',
+                    data: [5, 7, 4, 9, 7, 7, 4],
+                    backgroundColor: function(context) {
+                        const index = context.dataIndex;
+                        // Highlight bar ke-4 (Wed) dengan warna merah
+                        return index === 3 ? '#ef5350' : '#e57373';
+                    },
+                    borderRadius: 8,
+                    barPercentage: 0.7,
+                    categoryPercentage: 0.8
                 }]
             },
             options: {
@@ -376,7 +344,7 @@
                         displayColors: false,
                         callbacks: {
                             label: function(context) {
-                                return 'Users: ' + context.parsed.y;
+                                return context.parsed.y + 'j';
                             }
                         }
                     }
@@ -384,15 +352,15 @@
                 scales: {
                     y: {
                         beginAtZero: true,
-                        max: 2500,
+                        max: 10,
                         ticks: {
-                            stepSize: 500,
+                            stepSize: 2,
                             color: 'rgba(255, 255, 255, 0.6)',
                             font: {
                                 size: 11
                             },
                             callback: function(value) {
-                                return value;
+                                return value + 'j';
                             }
                         },
                         grid: {

@@ -53,6 +53,7 @@
                     <!-- Password Input -->
                     <div class="form-group">
                         <div class="input-icon">
+                            <i class="bi bi-lock-fill icon"></i>
                             <input 
                                 type="password" 
                                 class="form-control @error('password') is-invalid @enderror" 

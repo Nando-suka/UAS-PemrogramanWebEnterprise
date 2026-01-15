@@ -76,9 +76,8 @@
         <div class="chart-section">
             <div class="chart-card-jurnal">
                 <div class="chart-header-jurnal">
-                    <h5>Users</h5>
-                    <div class="date-selector">
-                        <span>12 September 2023</span>
+                    <div class="date-selector-top">
+                        <span>September 2023</span>
                         <i class="bi bi-chevron-down ms-2"></i>
                     </div>
                 </div>
@@ -116,10 +115,9 @@
     .info-value { color: white; font-size: 1.1rem; font-weight: 700; }
     .chart-section { min-height: 500px; }
     .chart-card-jurnal { background: linear-gradient(135deg, #3a3d5f 0%, #2C2E4E 100%); border-radius: 12px; padding: 1.5rem; border: 1px solid rgba(255, 255, 255, 0.1); height: 100%; }
-    .chart-header-jurnal { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-    .chart-header-jurnal h5 { color: white; font-size: 1.2rem; font-weight: 600; margin: 0; }
-    .date-selector { background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); color: rgba(255, 255, 255, 0.8); padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; transition: all 0.3s ease; }
-    .date-selector:hover { background: rgba(255, 255, 255, 0.12); border-color: rgba(255, 255, 255, 0.25); }
+    .chart-header-jurnal { display: flex; justify-content: flex-end; align-items: center; margin-bottom: 1.5rem; }
+    .date-selector-top { background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); color: white; padding: 0.6rem 1.2rem; border-radius: 6px; font-size: 0.9rem; font-weight: 500; cursor: pointer; display: flex; align-items: center; transition: all 0.3s ease; }
+    .date-selector-top:hover { background: rgba(255, 255, 255, 0.12); border-color: rgba(255, 255, 255, 0.25); }
     .chart-container-jurnal { position: relative; height: 420px; }
     @media (max-width: 1024px) { .jurnal-content { grid-template-columns: 1fr; } .info-cards { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); } }
     @media (max-width: 768px) { .jurnal-header { flex-direction: column; align-items: stretch; } .chart-container-jurnal { height: 300px; } }
@@ -133,27 +131,21 @@
         Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
 
         const ctx = document.getElementById('usersChartWeekly').getContext('2d');
-        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-        gradient.addColorStop(0, 'rgba(255, 193, 7, 0.3)');
-        gradient.addColorStop(1, 'rgba(255, 193, 7, 0)');
 
         new Chart(ctx, {
-            type: 'line',
+            type: 'bar',
             data: {
                 labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
                 datasets: [{
-                    label: 'Users',
-                    data: [500, 1200, 800, 2200],
-                    borderColor: '#ffc107',
-                    backgroundColor: gradient,
-                    borderWidth: 3,
-                    fill: true,
-                    tension: 0.4,
-                    pointRadius: 6,
-                    pointBackgroundColor: '#ffc107',
-                    pointBorderColor: '#fff',
-                    pointBorderWidth: 2,
-                    pointHoverRadius: 8
+                    label: 'Hours',
+                    data: [6, 8, 5, 7],
+                    backgroundColor: function(context) {
+                        const index = context.dataIndex;
+                        return index === 1 ? '#ef5350' : '#e57373';
+                    },
+                    borderRadius: 8,
+                    barPercentage: 0.6,
+                    categoryPercentage: 0.8
                 }]
             },
             options: {
@@ -168,14 +160,19 @@
                         borderColor: 'rgba(255, 255, 255, 0.1)',
                         borderWidth: 1,
                         padding: 12,
-                        displayColors: false
+                        displayColors: false,
+                        callbacks: {
+                            label: function(context) {
+                                return context.parsed.y + 'j';
+                            }
+                        }
                     }
                 },
                 scales: {
                     y: {
                         beginAtZero: true,
-                        max: 2500,
-                        ticks: { stepSize: 500, color: 'rgba(255, 255, 255, 0.6)', font: { size: 11 } },
+                        max: 10,
+                        ticks: { stepSize: 2, color: 'rgba(255, 255, 255, 0.6)', font: { size: 11 }, callback: function(value) { return value + 'j'; } },
                         grid: { color: 'rgba(255, 255, 255, 0.05)', drawBorder: false }
                     },
                     x: {

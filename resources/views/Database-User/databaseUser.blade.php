@@ -17,7 +17,7 @@
                     <i class="bi bi-people"></i>
                 </div>
                 <div class="stat-info">
-                    <h3>{{ $totalUsers ?? 4800 }}</h3>
+                    <h3>4800</h3>
                     <p>Total Users</p>
                 </div>
             </div>
@@ -29,7 +29,7 @@
                     <i class="bi bi-person-check"></i>
                 </div>
                 <div class="stat-info">
-                    <h3>{{ $activeUsers ?? 3600 }}</h3>
+                    <h3>3600</h3>
                     <p>Active Users</p>
                 </div>
             </div>
@@ -41,7 +41,7 @@
                     <i class="bi bi-journal-text"></i>
                 </div>
                 <div class="stat-info">
-                    <h3>{{ $journalEntries ?? 900 }}</h3>
+                    <h3>900</h3>
                     <p>Journal Entries</p>
                 </div>
             </div>
@@ -53,162 +53,262 @@
                     <i class="bi bi-moon-stars"></i>
                 </div>
                 <div class="stat-info">
-                    <h3>{{ $sleepRecords ?? 800 }}</h3>
+                    <h3>800</h3>
                     <p>Sleep Records</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Table Card -->
-    <div class="table-card">
-        <!-- Table Header Actions -->
-        <div class="table-actions">
-            <div class="table-actions-left">
-                <div class="search-box-table">
-                    <i class="bi bi-search"></i>
-                    <input type="text" id="searchInput" placeholder="Cari user...">
-                </div>
-            </div>
-            <div class="table-actions-right">
-                <button class="btn-action" onclick="sortTable()">
-                    <i class="bi bi-funnel"></i>
-                    Sortir
-                </button>
-                <button class="btn-action" onclick="refreshTable()">
-                    <i class="bi bi-arrow-clockwise"></i>
-                    Refresh
-                </button>
-                <button class="btn-action btn-primary" onclick="openAddUserModal()">
-                    <i class="bi bi-plus-circle"></i>
-                    Tambah User
-                </button>
-            </div>
+    <!-- Search and Actions Bar -->
+    <div class="search-actions-bar">
+        <div class="search-container">
+            <i class="bi bi-search"></i>
+            <input type="text" id="searchInput" placeholder="Search by name, email, or ID">
         </div>
-
-        <!-- Table -->
-        <div class="table-responsive">
-            <table class="user-table" id="userTable">
-                <thead>
-                    <tr>
-                        <th>User</th>
-                        <th>Contact</th>
-                        <th>Status Jurnal</th>
-                        <th>Status</th>
-                        <th>Last Login</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($users ?? [] as $user)
-                    <tr>
-                        <!-- User -->
-                        <td>
-                            <div class="user-info">
-                                <div class="user-avatar">
-                                    {{ strtoupper(substr($user->email, 0, 1)) }}
-                                </div>
-                                <div class="user-details">
-                                    <div class="user-name">{{ $user->name ?? 'User ' . $user->id }}</div>
-                                    <div class="user-id">#{{ $user->id }}</div>
-                                </div>
-                            </div>
-                        </td>
-
-                        <!-- Contact -->
-                        <td>
-                            <div class="contact-info">
-                                <div class="contact-email">
-                                    <i class="bi bi-envelope"></i>
-                                    {{ $user->email }}
-                                </div>
-                                <div class="contact-phone">
-                                    <i class="bi bi-telephone"></i>
-                                    {{ $user->phone ?? '+62 812-xxxx-xxxx' }}
-                                </div>
-                            </div>
-                        </td>
-
-                        <!-- Status Jurnal -->
-                        <td>
-                            <div class="journal-status">
-                                <span class="journal-count">{{ $user->journals_count ?? rand(5, 50) }} entries</span>
-                                <div class="journal-date">Last: {{ $user->last_journal_date ?? now()->subDays(rand(1, 7))->format('d/m/Y') }}</div>
-                            </div>
-                        </td>
-
-                        <!-- Status -->
-                        <td>
-                            @if($user->is_active ?? (rand(0, 1) == 1))
-                                <span class="status-badge status-active">Active</span>
-                            @else
-                                <span class="status-badge status-inactive">Inactive</span>
-                            @endif
-                        </td>
-
-                        <!-- Last Login -->
-                        <td>
-                            <div class="last-login">
-                                {{ $user->last_login_at ? $user->last_login_at->format('d M Y, H:i') : 'Never' }}
-                            </div>
-                        </td>
-
-                        <!-- Actions -->
-                        <td>
-                            <div class="action-buttons">
-                                <button class="btn-icon" title="View Details" onclick="viewUser({{ $user->id }})">
-                                    <i class="bi bi-eye"></i>
-                                </button>
-                                <button class="btn-icon" title="Edit User" onclick="editUser({{ $user->id }})">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                                <button class="btn-icon btn-danger" title="Delete User" onclick="deleteUser({{ $user->id }})">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="6" class="text-center py-5">
-                            <div class="empty-state">
-                                <i class="bi bi-inbox" style="font-size: 3rem; opacity: 0.5;"></i>
-                                <p class="mt-3 mb-0">Belum ada data user</p>
-                            </div>
-                        </td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
+        <div class="action-buttons-top">
+            <button class="btn-top-action">
+                <i class="bi bi-funnel"></i>
+                Sort by
+            </button>
+            <button class="btn-top-action" onclick="refreshTable()">
+                <i class="bi bi-arrow-clockwise"></i>
+                Refresh
+            </button>
         </div>
+    </div>
 
-        <!-- Pagination -->
-        <div class="table-pagination">
-            <div class="pagination-info">
-                Showing 1 to 10 of {{ count($users ?? []) }} entries
-            </div>
-            <div class="pagination-controls">
-                <button class="page-btn" disabled>
-                    <i class="bi bi-chevron-left"></i>
-                </button>
-                <button class="page-btn active">1</button>
-                <button class="page-btn">2</button>
-                <button class="page-btn">3</button>
-                <button class="page-btn">
-                    <i class="bi bi-chevron-right"></i>
-                </button>
-            </div>
-        </div>
+    <!-- User Table -->
+    <div class="user-table-container">
+        <table class="modern-user-table">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Contact</th>
+                    <th>Sleep Status</th>
+                    <th>Status</th>
+                    <th>Last Active</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- User 1 - Active -->
+                <tr>
+                    <td>
+                        <div class="user-cell">
+                            <div class="user-avatar-modern">
+                                <i class="bi bi-person-circle"></i>
+                            </div>
+                            <div class="user-info-modern">
+                                <div class="user-name-modern">Alfonso de</div>
+                                <div class="user-id-modern">ID #418230</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="contact-cell">
+                            <div class="contact-item-modern">
+                                <i class="bi bi-envelope"></i>
+                                <span>Alfonso.de@gmail.com</span>
+                            </div>
+                            <div class="contact-item-modern">
+                                <i class="bi bi-telephone"></i>
+                                <span>+62123456789</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="sleep-status-cell">
+                            <div class="sleep-avg">Avg. Sleep: 7.2h</div>
+                            <div class="sleep-quality">Quality: 85%</div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="status-badge-modern status-active-modern">Active</span>
+                    </td>
+                    <td>
+                        <div class="last-active-cell">
+                            2024-02-01<br>14:30
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- User 2 - Not Active -->
+                <tr>
+                    <td>
+                        <div class="user-cell">
+                            <div class="user-avatar-modern">
+                                <i class="bi bi-person-circle"></i>
+                            </div>
+                            <div class="user-info-modern">
+                                <div class="user-name-modern">Alfonso de</div>
+                                <div class="user-id-modern">ID #418230</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="contact-cell">
+                            <div class="contact-item-modern">
+                                <i class="bi bi-envelope"></i>
+                                <span>Alfonso.de@gmail.com</span>
+                            </div>
+                            <div class="contact-item-modern">
+                                <i class="bi bi-telephone"></i>
+                                <span>+62123456789</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="sleep-status-cell">
+                            <div class="sleep-avg">Avg. Sleep: 1.2h</div>
+                            <div class="sleep-quality">Quality: 20%</div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="status-badge-modern status-inactive-modern">Not Active</span>
+                    </td>
+                    <td>
+                        <div class="last-active-cell">
+                            2024-02-01<br>14:30
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- User 3 - Active -->
+                <tr>
+                    <td>
+                        <div class="user-cell">
+                            <div class="user-avatar-modern">
+                                <i class="bi bi-person-circle"></i>
+                            </div>
+                            <div class="user-info-modern">
+                                <div class="user-name-modern">Maria Santos</div>
+                                <div class="user-id-modern">ID #418231</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="contact-cell">
+                            <div class="contact-item-modern">
+                                <i class="bi bi-envelope"></i>
+                                <span>maria.santos@gmail.com</span>
+                            </div>
+                            <div class="contact-item-modern">
+                                <i class="bi bi-telephone"></i>
+                                <span>+62123456790</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="sleep-status-cell">
+                            <div class="sleep-avg">Avg. Sleep: 8.5h</div>
+                            <div class="sleep-quality">Quality: 92%</div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="status-badge-modern status-active-modern">Active</span>
+                    </td>
+                    <td>
+                        <div class="last-active-cell">
+                            2024-02-01<br>16:45
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- User 4 - Not Active -->
+                <tr>
+                    <td>
+                        <div class="user-cell">
+                            <div class="user-avatar-modern">
+                                <i class="bi bi-person-circle"></i>
+                            </div>
+                            <div class="user-info-modern">
+                                <div class="user-name-modern">John Doe</div>
+                                <div class="user-id-modern">ID #418232</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="contact-cell">
+                            <div class="contact-item-modern">
+                                <i class="bi bi-envelope"></i>
+                                <span>john.doe@gmail.com</span>
+                            </div>
+                            <div class="contact-item-modern">
+                                <i class="bi bi-telephone"></i>
+                                <span>+62123456791</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="sleep-status-cell">
+                            <div class="sleep-avg">Avg. Sleep: 4.8h</div>
+                            <div class="sleep-quality">Quality: 45%</div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="status-badge-modern status-inactive-modern">Not Active</span>
+                    </td>
+                    <td>
+                        <div class="last-active-cell">
+                            2024-01-28<br>09:20
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- User 5 - Active -->
+                <tr>
+                    <td>
+                        <div class="user-cell">
+                            <div class="user-avatar-modern">
+                                <i class="bi bi-person-circle"></i>
+                            </div>
+                            <div class="user-info-modern">
+                                <div class="user-name-modern">Sarah Johnson</div>
+                                <div class="user-id-modern">ID #418233</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="contact-cell">
+                            <div class="contact-item-modern">
+                                <i class="bi bi-envelope"></i>
+                                <span>sarah.j@gmail.com</span>
+                            </div>
+                            <div class="contact-item-modern">
+                                <i class="bi bi-telephone"></i>
+                                <span>+62123456792</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="sleep-status-cell">
+                            <div class="sleep-avg">Avg. Sleep: 7.8h</div>
+                            <div class="sleep-quality">Quality: 88%</div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="status-badge-modern status-active-modern">Active</span>
+                    </td>
+                    <td>
+                        <div class="last-active-cell">
+                            2024-02-01<br>18:10
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>
 
 @push('styles')
 <style>
-    /* ===== DATABASE USER PAGE STYLES ===== */
+    /* ===== DATABASE USER PAGE (NEW DESIGN) ===== */
     .database-user-page {
         padding: 1.5rem;
+        max-width: 100%;
     }
 
+    /* Page Header */
     .page-header h2 {
         font-size: 1.8rem;
         font-weight: 700;
@@ -228,6 +328,7 @@
         gap: 1rem;
         border: 1px solid rgba(255, 255, 255, 0.1);
         transition: all 0.3s ease;
+        height: 100%;
     }
 
     .stat-card:hover {
@@ -246,6 +347,7 @@
         justify-content: center;
         font-size: 1.8rem;
         color: #4dd4ac;
+        flex-shrink: 0;
     }
 
     .stat-info h3 {
@@ -261,343 +363,260 @@
         margin: 0;
     }
 
-    /* ===== TABLE CARD ===== */
-    .table-card {
-        background: #2C2E4E;
-        border-radius: 12px;
-        overflow: hidden;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .table-actions {
-        padding: 1.5rem;
+    /* Search and Actions Bar */
+    .search-actions-bar {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        flex-wrap: wrap;
+        margin-bottom: 2rem;
         gap: 1rem;
+        flex-wrap: wrap;
     }
 
-    .table-actions-left,
-    .table-actions-right {
-        display: flex;
-        gap: 0.75rem;
-        align-items: center;
-    }
-
-    .search-box-table {
+    .search-container {
+        flex: 1;
+        max-width: 500px;
         background: rgba(255, 255, 255, 0.05);
         border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 8px;
-        padding: 0.6rem 1rem;
+        border-radius: 10px;
+        padding: 0.8rem 1.2rem;
         display: flex;
         align-items: center;
-        gap: 0.5rem;
-        min-width: 250px;
+        gap: 0.8rem;
     }
 
-    .search-box-table i {
+    .search-container i {
         color: rgba(255, 255, 255, 0.5);
-        font-size: 0.9rem;
+        font-size: 1.1rem;
     }
 
-    .search-box-table input {
+    .search-container input {
+        flex: 1;
         background: transparent;
         border: none;
         outline: none;
         color: white;
-        width: 100%;
-        font-size: 0.9rem;
+        font-size: 0.95rem;
     }
 
-    .search-box-table input::placeholder {
+    .search-container input::placeholder {
         color: rgba(255, 255, 255, 0.4);
     }
 
-    .btn-action {
+    .action-buttons-top {
+        display: flex;
+        gap: 0.8rem;
+    }
+
+    .btn-top-action {
         background: rgba(255, 255, 255, 0.05);
         border: 1px solid rgba(255, 255, 255, 0.1);
         color: rgba(255, 255, 255, 0.8);
-        padding: 0.6rem 1.2rem;
-        border-radius: 8px;
-        font-size: 0.9rem;
+        padding: 0.8rem 1.5rem;
+        border-radius: 10px;
+        font-size: 0.95rem;
         font-weight: 500;
         cursor: pointer;
         transition: all 0.3s ease;
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0.6rem;
     }
 
-    .btn-action:hover {
+    .btn-top-action:hover {
         background: rgba(255, 255, 255, 0.1);
         border-color: rgba(255, 255, 255, 0.2);
         color: white;
     }
 
-    .btn-action.btn-primary {
-        background: #4dd4ac;
-        border-color: #4dd4ac;
-        color: #1e2240;
+    .btn-top-action i {
+        font-size: 1rem;
     }
 
-    .btn-action.btn-primary:hover {
-        background: #3ec99a;
-        border-color: #3ec99a;
-    }
-
-    /* ===== TABLE ===== */
-    .table-responsive {
+    /* User Table Container */
+    .user-table-container {
+        background: linear-gradient(135deg, #2C2E4E 0%, #1e2240 100%);
+        border-radius: 16px;
+        padding: 2rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
         overflow-x: auto;
     }
 
-    .user-table {
+    /* Modern Table */
+    .modern-user-table {
         width: 100%;
-        border-collapse: collapse;
+        border-collapse: separate;
+        border-spacing: 0 1rem;
     }
 
-    .user-table thead {
-        background: rgba(255, 255, 255, 0.03);
-    }
-
-    .user-table th {
-        padding: 1rem 1.5rem;
-        text-align: left;
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: rgba(255, 255, 255, 0.7);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .user-table td {
-        padding: 1.2rem 1.5rem;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        color: rgba(255, 255, 255, 0.8);
+    .modern-user-table thead th {
+        color: rgba(255, 255, 255, 0.6);
         font-size: 0.9rem;
+        font-weight: 600;
+        text-align: left;
+        padding: 0 1.5rem 1rem 1.5rem;
+        border: none;
     }
 
-    .user-table tbody tr {
+    .modern-user-table tbody tr {
+        background: rgba(255, 255, 255, 0.03);
         transition: all 0.3s ease;
     }
 
-    .user-table tbody tr:hover {
-        background: rgba(255, 255, 255, 0.03);
+    .modern-user-table tbody tr:hover {
+        background: rgba(255, 255, 255, 0.06);
+        transform: translateX(5px);
     }
 
-    /* User Info */
-    .user-info {
+    .modern-user-table tbody td {
+        padding: 1.5rem;
+        border: none;
+        color: white;
+        vertical-align: middle;
+    }
+
+    .modern-user-table tbody tr td:first-child {
+        border-top-left-radius: 12px;
+        border-bottom-left-radius: 12px;
+    }
+
+    .modern-user-table tbody tr td:last-child {
+        border-top-right-radius: 12px;
+        border-bottom-right-radius: 12px;
+    }
+
+    /* User Cell */
+    .user-cell {
         display: flex;
         align-items: center;
-        gap: 0.75rem;
+        gap: 1rem;
     }
 
-    .user-avatar {
-        width: 45px;
-        height: 45px;
-        background: linear-gradient(135deg, #4dd4ac 0%, #3ec99a 100%);
-        border-radius: 10px;
+    .user-avatar-modern {
+        width: 50px;
+        height: 50px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: 700;
-        font-size: 1.1rem;
-        color: #1e2240;
+        font-size: 2rem;
+        color: rgba(255, 255, 255, 0.6);
+        flex-shrink: 0;
     }
 
-    .user-details {
-        display: flex;
-        flex-direction: column;
-        gap: 0.2rem;
-    }
-
-    .user-name {
-        font-weight: 600;
-        color: white;
-        font-size: 0.95rem;
-    }
-
-    .user-id {
-        font-size: 0.8rem;
-        color: rgba(255, 255, 255, 0.5);
-    }
-
-    /* Contact Info */
-    .contact-info {
-        display: flex;
-        flex-direction: column;
-        gap: 0.4rem;
-    }
-
-    .contact-email,
-    .contact-phone {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 0.85rem;
-    }
-
-    .contact-email i,
-    .contact-phone i {
-        font-size: 0.8rem;
-        color: rgba(255, 255, 255, 0.5);
-    }
-
-    /* Journal Status */
-    .journal-status {
+    .user-info-modern {
         display: flex;
         flex-direction: column;
         gap: 0.3rem;
     }
 
-    .journal-count {
+    .user-name-modern {
+        font-size: 1rem;
         font-weight: 600;
         color: white;
-        font-size: 0.9rem;
     }
 
-    .journal-date {
-        font-size: 0.8rem;
-        color: rgba(255, 255, 255, 0.5);
-    }
-
-    /* Status Badge */
-    .status-badge {
-        display: inline-block;
-        padding: 0.4rem 0.9rem;
-        border-radius: 6px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    .status-active {
-        background: rgba(77, 212, 172, 0.15);
-        color: #4dd4ac;
-        border: 1px solid rgba(77, 212, 172, 0.3);
-    }
-
-    .status-inactive {
-        background: rgba(239, 68, 68, 0.15);
-        color: #ef4444;
-        border: 1px solid rgba(239, 68, 68, 0.3);
-    }
-
-    /* Last Login */
-    .last-login {
+    .user-id-modern {
         font-size: 0.85rem;
-        color: rgba(255, 255, 255, 0.7);
-    }
-
-    /* Action Buttons */
-    .action-buttons {
-        display: flex;
-        gap: 0.5rem;
-    }
-
-    .btn-icon {
-        width: 36px;
-        height: 36px;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 6px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        color: rgba(255, 255, 255, 0.7);
-    }
-
-    .btn-icon:hover {
-        background: rgba(255, 255, 255, 0.1);
-        color: white;
-        border-color: rgba(255, 255, 255, 0.2);
-    }
-
-    .btn-icon.btn-danger:hover {
-        background: rgba(239, 68, 68, 0.15);
-        color: #ef4444;
-        border-color: rgba(239, 68, 68, 0.3);
-    }
-
-    /* Pagination */
-    .table-pagination {
-        padding: 1.5rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .pagination-info {
-        color: rgba(255, 255, 255, 0.6);
-        font-size: 0.9rem;
-    }
-
-    .pagination-controls {
-        display: flex;
-        gap: 0.5rem;
-    }
-
-    .page-btn {
-        width: 36px;
-        height: 36px;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 6px;
-        color: rgba(255, 255, 255, 0.7);
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-size: 0.9rem;
-    }
-
-    .page-btn:hover:not(:disabled) {
-        background: rgba(255, 255, 255, 0.1);
-        color: white;
-    }
-
-    .page-btn.active {
-        background: #4dd4ac;
-        color: #1e2240;
-        border-color: #4dd4ac;
-        font-weight: 600;
-    }
-
-    .page-btn:disabled {
-        opacity: 0.4;
-        cursor: not-allowed;
-    }
-
-    /* Empty State */
-    .empty-state {
         color: rgba(255, 255, 255, 0.5);
+    }
+
+    /* Contact Cell */
+    .contact-cell {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .contact-item-modern {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    .contact-item-modern i {
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    /* Sleep Status Cell */
+    .sleep-status-cell {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+
+    .sleep-avg {
+        font-size: 0.9rem;
+        color: white;
+        font-weight: 500;
+    }
+
+    .sleep-quality {
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    /* Status Badge Modern */
+    .status-badge-modern {
+        display: inline-block;
+        padding: 0.5rem 1.2rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-align: center;
+        min-width: 100px;
+    }
+
+    .status-active-modern {
+        background: rgba(91, 110, 240, 0.2);
+        color: #5b6ef0;
+        border: 1px solid rgba(91, 110, 240, 0.4);
+    }
+
+    .status-inactive-modern {
+        background: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+        border: 1px solid rgba(239, 68, 68, 0.4);
+    }
+
+    /* Last Active Cell */
+    .last-active-cell {
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.7);
+        line-height: 1.6;
     }
 
     /* Responsive */
+    @media (max-width: 1200px) {
+        .user-table-container {
+            overflow-x: auto;
+        }
+
+        .modern-user-table {
+            min-width: 900px;
+        }
+    }
+
     @media (max-width: 768px) {
-        .table-actions {
+        .search-actions-bar {
             flex-direction: column;
             align-items: stretch;
         }
 
-        .table-actions-left,
-        .table-actions-right {
-            width: 100%;
+        .search-container {
+            max-width: 100%;
+        }
+
+        .action-buttons-top {
             justify-content: space-between;
         }
 
-        .search-box-table {
-            min-width: auto;
-            flex: 1;
-        }
-
-        .table-pagination {
-            flex-direction: column;
-            gap: 1rem;
+        .user-table-container {
+            padding: 1rem;
         }
     }
 </style>
@@ -608,7 +627,7 @@
     // Search functionality
     document.getElementById('searchInput')?.addEventListener('input', function(e) {
         const searchTerm = e.target.value.toLowerCase();
-        const rows = document.querySelectorAll('#userTable tbody tr');
+        const rows = document.querySelectorAll('.modern-user-table tbody tr');
         
         rows.forEach(row => {
             const text = row.textContent.toLowerCase();
@@ -616,37 +635,9 @@
         });
     });
 
-    // Sort table
-    function sortTable() {
-        alert('Sort functionality coming soon!');
-    }
-
     // Refresh table
     function refreshTable() {
         location.reload();
-    }
-
-    // View user
-    function viewUser(id) {
-        window.location.href = `/database-user/${id}`;
-    }
-
-    // Edit user
-    function editUser(id) {
-        window.location.href = `/database-user/${id}/edit`;
-    }
-
-    // Delete user
-    function deleteUser(id) {
-        if (confirm('Apakah Anda yakin ingin menghapus user ini?')) {
-            // Implement delete logic
-            alert('Delete user #' + id);
-        }
-    }
-
-    // Add user modal
-    function openAddUserModal() {
-        alert('Add user modal coming soon!');
     }
 </script>
 @endpush
