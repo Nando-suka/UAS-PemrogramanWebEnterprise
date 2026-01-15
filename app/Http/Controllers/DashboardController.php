@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\View;
 
 class DashboardController extends Controller
 {
@@ -69,5 +70,13 @@ class DashboardController extends Controller
             'female' => [3, 5, 4, 6, 5, 7],
             'male' => [2, 4, 3, 5, 4, 6],
         ];
+    }
+    
+    public function indexCopy()
+    {
+        $user = auth()->user();
+        // Mengakses file index.blade-copy.php di folder dashboard menggunakan path lengkap
+        $viewPath = resource_path('views/dashboard/index.blade-copy.php');
+        return View::file($viewPath, compact('user'));
     }
 }

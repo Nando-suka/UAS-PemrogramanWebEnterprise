@@ -172,6 +172,88 @@
             </div>
         </div>
     </div>
+
+    <!-- JWT Token Section -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h5>
+                        <i class="bi bi-shield-lock text-success"></i> JWT Token Information
+                    </h5>
+                </div>
+                
+                @if(session('jwt_token'))
+                <div class="alert alert-info" style="background: rgba(13, 202, 240, 0.1); border-color: rgba(13, 202, 240, 0.3); color: rgba(255, 255, 255, 0.9);">
+                    <strong>🔐 Algorithm:</strong> HS256 (HMAC SHA-256)<br>
+                    <strong>⏰ Expires In:</strong> 30 minutes<br>
+                    <strong>📅 Valid Until:</strong> {{ session('token_expires_at') ? session('token_expires_at')->format('d M Y H:i:s') : 'N/A' }}
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label fw-bold" style="color: rgba(255, 255, 255, 0.9);">Your JWT Token:</label>
+                    <div class="input-group">
+                        <input 
+                            type="text" 
+                            class="form-control font-monospace small" 
+                            id="jwtToken" 
+                            value="{{ session('jwt_token') }}" 
+                            readonly
+                            style="background: rgba(255, 255, 255, 0.05); border-color: rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.9);"
+                        >
+                        <button class="btn btn-outline-secondary" type="button" onclick="copyToken()" style="border-color: rgba(255, 255, 255, 0.2); color: rgba(255, 255, 255, 0.8);">
+                            <i class="bi bi-clipboard"></i> Copy
+                        </button>
+                    </div>
+                    <small class="text-muted" style="color: rgba(255, 255, 255, 0.6);">Use this token for API authentication</small>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label fw-bold" style="color: rgba(255, 255, 255, 0.9);">Passport Access Token:</label>
+                    <div class="input-group">
+                        <input 
+                            type="text" 
+                            class="form-control font-monospace small" 
+                            id="passportToken" 
+                            value="{{ session('passport_token') ?? 'Not generated' }}" 
+                            readonly
+                            style="background: rgba(255, 255, 255, 0.05); border-color: rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.9);"
+                        >
+                        <button class="btn btn-outline-secondary" type="button" onclick="copyPassportToken()" style="border-color: rgba(255, 255, 255, 0.2); color: rgba(255, 255, 255, 0.8);">
+                            <i class="bi bi-clipboard"></i> Copy
+                        </button>
+                    </div>
+                    <small class="text-muted" style="color: rgba(255, 255, 255, 0.6);">OAuth2 access token for API calls</small>
+                </div>
+                
+                <div class="d-flex gap-2 flex-wrap">
+                    <button class="btn btn-sm btn-primary" onclick="verifyToken()">
+                        <i class="bi bi-check-circle"></i> Verify Token
+                    </button>
+                    <button class="btn btn-sm btn-success" onclick="refreshToken()">
+                        <i class="bi bi-arrow-clockwise"></i> Refresh Token
+                    </button>
+                    <button class="btn btn-sm btn-info" onclick="decodeToken()">
+                        <i class="bi bi-eye"></i> Decode Token
+                    </button>
+                </div>
+                
+                <!-- Token decode result -->
+                <div id="tokenResult" class="mt-3" style="display: none;">
+                    <div class="card" style="background: rgba(0, 0, 0, 0.3); border-color: rgba(255, 255, 255, 0.1);">
+                        <div class="card-body">
+                            <pre id="tokenData" class="mb-0" style="color: #0f0; background: transparent; border: none; font-size: 0.85rem;"></pre>
+                        </div>
+                    </div>
+                </div>
+                @else
+                <div class="alert alert-warning" style="background: rgba(255, 193, 7, 0.1); border-color: rgba(255, 193, 7, 0.3); color: rgba(255, 255, 255, 0.9);">
+                    <i class="bi bi-exclamation-triangle"></i> No JWT token found. Please login again.
+                </div>
+                @endif
+            </div>
+        </div>
+    </div>
 </div>
 
 @push('styles')
@@ -366,6 +448,71 @@
 
         .stat-details h3 {
             font-size: 1.6rem;
+        }
+    }
+
+    /* ===== JWT TOKEN SECTION STYLES ===== */
+    .chart-card .alert {
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+    }
+
+    .chart-card .form-label {
+        margin-bottom: 0.5rem;
+    }
+
+    .chart-card .input-group .form-control {
+        font-size: 0.85rem;
+    }
+
+    .chart-card .input-group .btn {
+        transition: all 0.3s ease;
+    }
+
+    .chart-card .input-group .btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .chart-card .d-flex.gap-2 .btn {
+        transition: all 0.3s ease;
+    }
+
+    .chart-card .d-flex.gap-2 .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    #tokenResult {
+        animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    #tokenData {
+        max-height: 300px;
+        overflow-y: auto;
+        padding: 1rem;
+        border-radius: 4px;
+    }
+
+    /* Responsive untuk JWT Token Section */
+    @media (max-width: 768px) {
+        .chart-card .d-flex.gap-2 {
+            flex-direction: column;
+        }
+
+        .chart-card .d-flex.gap-2 .btn {
+            width: 100%;
         }
     }
 </style>
@@ -580,6 +727,134 @@
             }
         });
     });
+
+    // JWT Token Functions
+    // Copy JWT Token
+    function copyToken() {
+        const tokenInput = document.getElementById('jwtToken');
+        if (tokenInput) {
+            tokenInput.select();
+            document.execCommand('copy');
+            alert('JWT Token copied to clipboard!');
+        }
+    }
+    
+    // Copy Passport Token
+    function copyPassportToken() {
+        const tokenInput = document.getElementById('passportToken');
+        if (tokenInput) {
+            tokenInput.select();
+            document.execCommand('copy');
+            alert('Passport Token copied to clipboard!');
+        }
+    }
+    
+    // Verify Token via API
+    async function verifyToken() {
+        const tokenInput = document.getElementById('jwtToken');
+        if (!tokenInput) return;
+        
+        const token = tokenInput.value;
+        
+        try {
+            const response = await fetch('/api/v1/token/verify', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                }
+            });
+            
+            const data = await response.json();
+            
+            const resultDiv = document.getElementById('tokenResult');
+            const dataPre = document.getElementById('tokenData');
+            
+            if (resultDiv && dataPre) {
+                resultDiv.style.display = 'block';
+                dataPre.textContent = JSON.stringify(data, null, 2);
+            }
+            
+            if (data.success) {
+                alert('✅ Token is valid!\nExpires in: ' + data.expires_in);
+            } else {
+                alert('❌ Token is invalid or expired!');
+            }
+        } catch (error) {
+            alert('Error verifying token: ' + error.message);
+        }
+    }
+    
+    // Refresh Token
+    async function refreshToken() {
+        const tokenInput = document.getElementById('jwtToken');
+        if (!tokenInput) return;
+        
+        const token = tokenInput.value;
+        
+        try {
+            const response = await fetch('/api/v1/token/refresh', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                }
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                tokenInput.value = data.token;
+                alert('✅ Token refreshed successfully!\nNew token expires in: ' + data.expires_in);
+                // Reload page to update session
+                location.reload();
+            } else {
+                alert('❌ Failed to refresh token: ' + data.message);
+            }
+        } catch (error) {
+            alert('Error refreshing token: ' + error.message);
+        }
+    }
+    
+    // Decode Token (client-side)
+    function decodeToken() {
+        const tokenInput = document.getElementById('jwtToken');
+        if (!tokenInput) return;
+        
+        const token = tokenInput.value;
+        
+        try {
+            // JWT format: header.payload.signature
+            const parts = token.split('.');
+            
+            if (parts.length !== 3) {
+                throw new Error('Invalid JWT format');
+            }
+            
+            // Decode payload (base64)
+            const payload = JSON.parse(atob(parts[1]));
+            
+            // Format timestamps
+            if (payload.iat) {
+                payload.issued_at = new Date(payload.iat * 1000).toLocaleString();
+            }
+            if (payload.exp) {
+                payload.expires_at = new Date(payload.exp * 1000).toLocaleString();
+                payload.expires_in_minutes = Math.round((payload.exp - Date.now() / 1000) / 60);
+            }
+            
+            const resultDiv = document.getElementById('tokenResult');
+            const dataPre = document.getElementById('tokenData');
+            
+            if (resultDiv && dataPre) {
+                resultDiv.style.display = 'block';
+                dataPre.textContent = JSON.stringify(payload, null, 2);
+            }
+            
+        } catch (error) {
+            alert('Error decoding token: ' + error.message);
+        }
+    }
 </script>
 @endpush
 @endsection

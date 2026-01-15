@@ -66,6 +66,11 @@ Route::get('/Report', function () {
     return view('Report.report');
 })->name('report');
 
+// Route untuk index.blade-copy.php
+Route::middleware('auth')->group(function () {
+    Route::get('/dashboard-copy', [DashboardController::class, 'indexCopy'])->name('dashboard.copy');
+});
+
 /*
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
