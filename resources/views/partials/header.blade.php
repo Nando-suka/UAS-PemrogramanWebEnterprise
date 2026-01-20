@@ -1,5 +1,12 @@
 <div class="header sleepy-header">
 
+    <!-- sebelum <div class="header-left"> -->
+    <button id="hamburgerBtn" class="hamburger-btn d-lg-none" aria-label="Toggle sidebar"
+        style="background:transparent;border:none;color: #fff;font-size:1.45rem;margin-right:0.5rem;">
+        <i class="bi bi-list"></i>
+    </button>
+
+
     <!-- Left / Logo -->
     <div class="header-left">
         <img src="{{ asset('images/logoPanda.png') }}" alt="Sleepy Panda Logo" class="panda-logo">

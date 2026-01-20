@@ -1,2 +1,10 @@
 /* sidebar.css removed - styling reverted to original global styles */
+.hamburger-btn {
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    font-size: 1.6rem;
+    margin-right: 0.75rem;
+    cursor: pointer;
+}
 

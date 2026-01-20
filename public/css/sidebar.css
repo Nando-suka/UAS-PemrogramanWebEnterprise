@@ -1,0 +1,101 @@
+/* ===================== */
+/* SIDEBAR MOBILE MODE */
+/* ===================== */
+
+@media (max-width: 1199px) {
+    .simple-sidebar {
+        position: fixed;
+        top: 0;
+        left: -300px;
+        height: 100vh;
+        width: 280px;
+        z-index: 1200;
+        transition: left 0.3s ease;
+        box-shadow: 6px 0 30px rgba(0,0,0,0.5);
+    }
+
+    .simple-sidebar.active {
+        left: 0;
+    }
+
+    /* Overlay */
+    .sidebar-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.45);
+        z-index: 1100;
+        display: none;
+    }
+
+    .sidebar-overlay.active {
+        display: block;
+    }
+}
+
+/* Sidebar submenu */
+.submenu {
+    display: block;
+    flex-direction: column;
+    margin-left: 0.5rem;
+    margin-top: 0.5rem;
+    gap: 0.5rem;
+}
+
+.submenu-item {
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    color: rgba(255,255,255,0.7);
+    font-size: 0.9rem;
+    text-decoration: none;
+}
+
+.submenu-item.active,
+.submenu-item:hover {
+    background: rgba(255,255,255,0.08);
+    color: #ffffff;
+}
+
+/* Profile dropdown */
+.profile-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: #1f2347;
+    border-radius: 12px;
+    width: 200px;
+    display: none;
+    margin-top: 0.75rem;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    z-index: 2000;
+}
+
+.profile-dropdown.show {
+    display: block;
+}
+
+.profile-dropdown .dropdown-item {
+    padding: 0.7rem 1rem;
+    color: #ffffff;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.profile-dropdown .dropdown-item:hover {
+    background: rgba(255,255,255,0.08);
+}
+
+.profile-dropdown .logout {
+    color: #ef4444;
+}
+
+.hamburger-btn {
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    font-size: 1.6rem;
+    margin-right: 0.75rem;
+    cursor: pointer;
+}
+

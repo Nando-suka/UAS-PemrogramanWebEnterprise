@@ -53,7 +53,8 @@
 /* Mobile behavior */
 @media (max-width: 1199px) {
     .simple-sidebar {
-        left: -280px;
+        width: 260px;
+        left: -260px;
     }
     .simple-sidebar.active {
         left: 0;
@@ -197,6 +198,12 @@
 	align-items: center;
 	gap: 1.5rem;
 	margin-bottom: 2rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1300;
+    border-radius: 0;
 }
 
 /* Left */
@@ -579,13 +586,126 @@
     color: rgba(255,255,255,0.5);
 }
 
-/* RESPONSIVE */
-@media (max-width: 992px) {
-    .dashboard-stats {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .report-grid {
-        grid-template-columns: 1fr;
-    }
+/* ===== RESPONSIVE IMPROVEMENTS ===== */
+/* Global container */
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
 }
+
+/* Desktop: sidebar tetap di kiri, main content mengambil sisa */
+.dashboard-main {
+  flex: 1;
+  padding: 1.8rem 2rem;
+  box-sizing: border-box;
+  transition: padding 220ms ease;
+}
+
+/* Make cards full-width on small screens, reduce paddings */
+@media (max-width: 1199px) {
+  /* Off-canvas sidebar */
+  .simple-sidebar {
+    position: fixed;
+    top: 4.5rem;
+    left: -320px; /* hidden by default */
+    height: calc(100vh - 4.5rem);
+    width: 280px;
+    z-index: 1100;
+    transition: left 260ms ease;
+    box-shadow: 4px 0 30px rgba(0,0,0,0.5);
+  }
+  .simple-sidebar.active {
+    left: 0;
+  }
+
+  /* overlay when sidebar open (create element via JS) */
+  .sidebar-overlay {
+    display: none;
+    top: 4.5rem;
+  }
+  .sidebar-overlay.active {
+    display: block;
+    position: fixed;
+    top: 4.8rem;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 1099;
+  }
+
+  .dashboard-main {
+    padding: 1rem;
+    padding-top: 4.8rem;
+    margin-left: 0;
+    transition: filter 220ms ease;
+  }
+
+  /* Header: show hamburger and compress brand text */
+  .sleepy-header {
+    grid-template-columns: auto 1fr auto;
+    padding: 0.6rem 1rem;
+  }
+  .brand-text { display: none; } /* optionally hide long brand on small screens */
+  .panda-logo { width: 36px; height: 36px; }
+
+  /* Chart containers smaller height on small screens */
+  .chart-container { height: 180px !important; }
+  .chart-container-large { height: 240px !important; }
+
+  /* Large chart becomes vertical spacing */
+  .chart-card-large { padding: 1rem; }
+
+  /* Reduce big numbers font to avoid overflow */
+  .stat-number h3 { font-size: 2.2rem; }
+
+  /* JWT buttons stacked */
+  .chart-card .d-flex.gap-2 { flex-direction: column; gap: 0.6rem; }
+
+  /* Report page: stats become 2-col grid */
+  .dashboard-stats { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+
+  /* Report grid becomes single column */
+  .report-grid { grid-template-columns: 1fr; }
+
+  /* Table/controls spacing */
+  .table-actions { flex-direction: column; gap: 0.75rem; align-items: stretch; }
+
+  /* Profile dropdown: align to left because of limited width */
+  .profile-dropdown { right: 8px; left: auto; }
+}
+
+/* Extra small screens */
+@media (max-width: 576px) {
+  .sleepy-header { padding: 0.5rem 0.8rem; gap: 0.6rem; }
+  .search-box { max-width: 240px; padding: 0.45rem 0.8rem; }
+  .chart-container { height: 160px !important; }
+  .chart-container-large { height: 200px !important; }
+  .stat-number h3 { font-size: 1.6rem; }
+  .stat-icon-dashboard { width: 46px; height: 46px; }
+  .simple-sidebar { width: 260px; left: -280px; }
+  .dashboard-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .report-grid {
+    grid-template-columns: 1fr;
+  }
+  .card,
+  .stat-card {
+    width: 100%;
+    padding: 1rem;
+  }
+  .header-center {
+    display: none;
+  }
+  .user-greeting {
+    display: none;
+  }
+}
+@media (max-width: 1199px) {
+  .dashboard-page {
+    padding: 0; /* ← MATIKAN */
+  }
+}
+

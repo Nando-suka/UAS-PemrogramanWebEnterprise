@@ -1,108 +1,119 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // ===== JURNAL DROPDOWN =====
-    const jurnalToggle = document.getElementById('jurnalToggle');
-    const jurnalSubmenu = document.getElementById('jurnalSubmenu');
-    
-    if (jurnalToggle && jurnalSubmenu) {
-        jurnalToggle.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            // Close other dropdowns
-            closeAllDropdowns(jurnalSubmenu);
-            
-            // Toggle active class
-            this.classList.toggle('dropdown-active');
-            jurnalSubmenu.classList.toggle('active');
-        });
-    }
-    
-    // ===== DATABASE USER DROPDOWN =====
-    const databaseUserToggle = document.getElementById('databaseUserToggle');
+document.addEventListener('DOMContentLoaded', () => {
+
+    /* ==========================
+     * ELEMENTS
+     * ========================== */
+    const sidebar   = document.getElementById('sidebar');
+    const hamburger = document.getElementById('hamburgerBtn');
+
+    const jurnalToggle        = document.getElementById('jurnalToggle');
+    const jurnalSubmenu       = document.getElementById('jurnalSubmenu');
+    const databaseUserToggle  = document.getElementById('databaseUserToggle');
     const databaseUserSubmenu = document.getElementById('databaseUserSubmenu');
-    
-    if (databaseUserToggle && databaseUserSubmenu) {
-        databaseUserToggle.addEventListener('click', function(e) {
+
+    /* ==========================
+     * OVERLAY
+     * ========================== */
+    let overlay = document.querySelector('.sidebar-overlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.className = 'sidebar-overlay';
+        document.body.appendChild(overlay);
+    }
+
+    /* ==========================
+     * SIDEBAR TOGGLE (MOBILE)
+     * ========================== */
+    function openSidebar() {
+        sidebar?.classList.add('active');
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        resizeCharts();
+    }
+
+    function closeSidebar() {
+        sidebar?.classList.remove('active');
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+        closeAllDropdowns();
+        resizeCharts();
+    }
+
+    hamburger?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        sidebar?.classList.contains('active') ? closeSidebar() : openSidebar();
+    });
+
+    overlay.addEventListener('click', closeSidebar);
+
+    /* ==========================
+     * DROPDOWN HANDLER
+     * ========================== */
+    function toggleDropdown(toggleBtn, submenu) {
+        toggleBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            
-            // Close other dropdowns
-            closeAllDropdowns(databaseUserSubmenu);
-            
-            // Toggle active class
-            this.classList.toggle('dropdown-active');
-            databaseUserSubmenu.classList.toggle('active');
+            closeAllDropdowns(submenu);
+            toggleBtn.classList.toggle('dropdown-active');
+            submenu.classList.toggle('active');
         });
     }
-    
-    // ===== CLOSE ALL DROPDOWNS (except current) =====
-    function closeAllDropdowns(exceptSubmenu) {
-        const allSubmenus = document.querySelectorAll('.submenu');
-        const allToggles = document.querySelectorAll('.simple-nav-item');
-        
-        allSubmenus.forEach(submenu => {
-            if (submenu !== exceptSubmenu) {
-                submenu.classList.remove('active');
-            }
+
+    jurnalToggle && jurnalSubmenu && toggleDropdown(jurnalToggle, jurnalSubmenu);
+    databaseUserToggle && databaseUserSubmenu && toggleDropdown(databaseUserToggle, databaseUserSubmenu);
+
+    function closeAllDropdowns(except = null) {
+        document.querySelectorAll('.submenu').forEach(sub => {
+            if (sub !== except) sub.classList.remove('active');
         });
-        
-        allToggles.forEach(toggle => {
-            if (toggle.id && toggle.id.includes('Toggle')) {
-                const relatedSubmenu = document.getElementById(toggle.id.replace('Toggle', 'Submenu'));
-                if (relatedSubmenu !== exceptSubmenu) {
-                    toggle.classList.remove('dropdown-active');
-                }
-            }
+
+        document.querySelectorAll('.simple-nav-item').forEach(btn => {
+            if (btn !== except) btn.classList.remove('dropdown-active');
         });
     }
-    
-    // ===== CLOSE SUBMENU WHEN CLICKING OUTSIDE =====
-    document.addEventListener('click', function(e) {
+
+    /* ==========================
+     * CLICK OUTSIDE (DESKTOP)
+     * ========================== */
+    document.addEventListener('click', (e) => {
         if (!e.target.closest('.nav-item-dropdown')) {
-            // Close all dropdowns
-            jurnalToggle?.classList.remove('dropdown-active');
-            jurnalSubmenu?.classList.remove('active');
-            
-            databaseUserToggle?.classList.remove('dropdown-active');
-            databaseUserSubmenu?.classList.remove('active');
+            closeAllDropdowns();
         }
     });
-    
-    // ===== HIGHLIGHT ACTIVE SUBMENU ITEM & KEEP DROPDOWN OPEN =====
-    const currentPath = window.location.pathname;
-    const submenuItems = document.querySelectorAll('.submenu-item');
-    
-    submenuItems.forEach(item => {
-        const itemHref = item.getAttribute('href');
-        
-        if (itemHref === currentPath) {
-            item.classList.add('active');
-            
-            // Find parent submenu and toggle
-            const parentSubmenu = item.closest('.submenu');
-            if (parentSubmenu) {
-                parentSubmenu.classList.add('active');
-                
-                // Find related toggle button
-                const parentDropdown = parentSubmenu.closest('.nav-item-dropdown');
-                if (parentDropdown) {
-                    const toggleBtn = parentDropdown.querySelector('.simple-nav-item');
-                    if (toggleBtn) {
-                        toggleBtn.classList.add('dropdown-active');
-                    }
-                }
-            }
-        }
-    });
-    
-    // ===== CHECK ROUTE AND KEEP DROPDOWN OPEN =====
-    // Jurnal routes
-    if (currentPath.includes('/jurnal')) {
+
+    /* ==========================
+     * ROUTE AWARE DROPDOWN
+     * ========================== */
+    const path = window.location.pathname;
+
+    if (path.includes('/jurnal')) {
         jurnalSubmenu?.classList.add('active');
         jurnalToggle?.classList.add('dropdown-active');
     }
-    
-    // Database User routes
-    if (currentPath.includes('/database-user')) {
+
+    if (path.includes('/database-user')) {
         databaseUserSubmenu?.classList.add('active');
         databaseUserToggle?.classList.add('dropdown-active');
     }
+
+    /* ==========================
+     * RESPONSIVE HANDLING
+     * ========================== */
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 1199) {
+            closeSidebar();
+        }
+    });
+
+    /* ==========================
+     * CHART RESIZE (SAFE)
+     * ========================== */
+    function resizeCharts() {
+        if (typeof Chart === 'undefined') return;
+
+        ['dailyChart','weeklyChart','monthlyChart','sleepTimeChart'].forEach(id => {
+            const chart = Chart.getChart(id);
+            chart && chart.resize();
+        });
+    }
+
 });
